@@ -1,0 +1,17 @@
+summary: Telegram Bot Handler for Movie Mood Generator
+description: >-
+  Telegram webhook handler that processes incoming messages and generates movie
+  mood words using OpenRouter API. Handles commands and movie title requests.
+lock: '!inline u/philipgalebach/telegram_bot_handler.script.lock'
+kind: script
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    body:
+      type: object
+      description: Telegram webhook update body
+      default: null
+      properties: {}
+  required:
+    - body

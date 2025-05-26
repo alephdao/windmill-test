@@ -2,17 +2,35 @@ import wmill
 import json
 import requests
 
-def main(body: dict) -> dict:
+def main(body: dict = None) -> dict:
     """
     Complete Telegram bot webhook handler for movie mood generation
     """
     
     try:
         print(f"Received Telegram webhook: {json.dumps(body, indent=2)}")
+        print(f"Body type: {type(body)}")
+        
+        # Handle null/None body
+        if body is None:
+            print("Body is None - no data received from Telegram")
+            return {"status": "no_data", "error": "No webhook data received"}
+        
+        # Handle non-dict body (sometimes comes as string)
+        if not isinstance(body, dict):
+            print(f"Body is not dict, trying to parse: {body}")
+            try:
+                if isinstance(body, str):
+                    body = json.loads(body)
+                else:
+                    return {"status": "invalid_format", "error": f"Body is {type(body)}, expected dict"}
+            except json.JSONDecodeError as e:
+                return {"status": "json_error", "error": f"Could not parse body as JSON: {str(e)}"}
         
         # Extract message details from Telegram update
         if 'message' not in body:
-            return {"status": "no_message", "response": "No message in update"}
+            print(f"No 'message' key in body. Keys: {list(body.keys()) if body else 'None'}")
+            return {"status": "no_message", "response": "No message in update", "body_keys": list(body.keys()) if body else None}
         
         message = body['message']
         chat_id = message['chat']['id']
@@ -82,7 +100,7 @@ def main(body: dict) -> dict:
         print(f"Error in telegram bot handler: {str(e)}")
         # Try to send error message to user if possible
         try:
-            if 'message' in body and 'chat' in body['message']:
+            if body and isinstance(body, dict) and 'message' in body and 'chat' in body['message']:
                 chat_id = body['message']['chat']['id']
                 return send_telegram_message(
                     chat_id, 
@@ -94,7 +112,8 @@ def main(body: dict) -> dict:
         return {
             "status": "error", 
             "error": str(e),
-            "update_received": body
+            "update_received": body,
+            "body_type": str(type(body))
         }
 
 
