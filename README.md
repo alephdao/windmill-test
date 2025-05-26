@@ -1,6 +1,8 @@
-# Windmill + OpenRouter Movie Mood Generator
+# Windmill + OpenRouter Movie Mood Generator 🎬
 
 A Windmill workflow that generates mood words for movies using OpenRouter's API and Google's Gemini model.
+
+**NEW: 🤖 Telegram Bot Integration!** - Now includes a Telegram bot that responds to movie titles with mood words!
 
 ## 🚀 Quick Start
 
@@ -51,6 +53,12 @@ wmill sync push
 
 ## 🧪 Usage
 
+### 🤖 Telegram Bot (Recommended):
+1. Set up the webhook (see Setup section below)
+2. Send `/start` to your bot in Telegram
+3. Send any movie title: `Inception`, `The Matrix`, `Star Wars`
+4. Get instant mood words response! ✨
+
 ### Command Line Test:
 ```bash
 wmill script run u/philipgalebach/movie_mood_generator --data '{"movie_title": "Star Wars"}'
@@ -66,6 +74,39 @@ wmill script run u/philipgalebach/movie_mood_generator --data '{"movie_title": "
 }
 ```
 
+## 🤖 Telegram Bot Setup
+
+### Prerequisites:
+1. **Telegram Bot Token**: Get from [@BotFather](https://t.me/botfather) on Telegram
+2. **Windmill Telegram Resource**: Configure `u/philipgalebach/windmill_telegram_test2_bot` with your token
+3. **OpenRouter API Key**: Same as main setup above
+
+### Quick Setup:
+```bash
+# 1. Deploy all scripts
+wmill sync push
+
+# 2. Get your Windmill webhook URL (replace with your actual URL)
+WEBHOOK_URL="https://app.windmill.dev/api/w/your-workspace/jobs/run/u/philipgalebach/telegram_webhook"
+
+# 3. Set Telegram webhook (replace YOUR_BOT_TOKEN)
+curl -X POST "https://api.telegram.org/bot<YOUR_BOT_TOKEN>/setWebhook" \
+     -H "Content-Type: application/json" \
+     -d "{\"url\": \"$WEBHOOK_URL\"}"
+
+# 4. Test your bot!
+# Send /start to your bot in Telegram, then try "Inception"
+```
+
+### Bot Commands:
+- `/start` or `/help` - Welcome message and instructions
+- Any movie title - Get mood words (e.g., "The Dark Knight")
+
+### Telegram Bot Files:
+- `telegram_movie_bot.py` - Main bot logic and message handling
+- `telegram_webhook.py` - Webhook endpoint for Telegram updates
+- `setup_telegram_bot.sh` - Automated setup script
+
 ## 🔐 Security Notes
 
 - **Never commit actual API keys** - they are gitignored
@@ -77,7 +118,10 @@ wmill script run u/philipgalebach/movie_mood_generator --data '{"movie_title": "
 
 ```
 windmill-test/
-├── movie_mood_generator.py              # Main script
+├── movie_mood_generator.py              # Core mood generation logic
+├── telegram_movie_bot.py               # Telegram bot handler
+├── telegram_webhook.py                 # Webhook endpoint for Telegram
+├── setup_telegram_bot.sh               # Telegram bot setup script
 ├── requirements.txt                     # Dependencies
 ├── .env.template                        # Template for local dev
 ├── thinner_openrouter.resource.template.yaml  # Template for Windmill resource

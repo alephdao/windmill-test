@@ -1,0 +1,42 @@
+summary: Telegram Bot Webhook Handler
+description: |
+  Webhook endpoint for receiving Telegram bot updates.
+  
+  This script processes incoming webhook requests from Telegram
+  and delegates to the movie mood generator bot handler.
+  
+  Setup:
+  1. Deploy this script to Windmill
+  2. Set the webhook URL in Telegram Bot API to point to this Windmill endpoint
+  3. Bot will automatically respond to movie title messages
+
+schema:
+  $schema: https://json-schema.org/draft/2020-12/schema
+  type: object
+  properties:
+    body:
+      type: object
+      description: Telegram webhook request body
+      properties:
+        update_id:
+          type: integer
+        message:
+          type: object
+          properties:
+            message_id:
+              type: integer
+            chat:
+              type: object
+              properties:
+                id:
+                  type: integer
+            text:
+              type: string
+  required:
+    - body
+
+lock:
+  - telegram_movie_bot.py
+
+kind: script
+language: python3
