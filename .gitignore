@@ -1,0 +1,23 @@
+# Environment and secrets
+.env
+*.resource.yaml
+
+# Python
+/venv
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Windmill generated files (keep templates, ignore actual resources)
+wmill-lock.yaml
+.wmill/
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db

@@ -1,0 +1,16 @@
+summary: Movie Mood Generator with OpenRouter
+description: >-
+  Simple test script that uses OpenRouter API to generate mood words for movies.
+  Perfect for testing OpenRouter integration in Windmill.
+
+schema:
+  $schema: 'https://json-schema.org/draft/2020-12/schema'
+  type: object
+  properties:
+    movie_title:
+      type: string
+      description: Name of the movie to analyze
+      default: "The Matrix"
+  required: []
+
+language: python3

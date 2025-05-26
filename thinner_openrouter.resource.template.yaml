@@ -1,0 +1,3 @@
+value: YOUR_OPENROUTER_API_KEY_HERE
+description: OpenRouter API key for movie mood generation
+resource_type: openrouter_api_key
