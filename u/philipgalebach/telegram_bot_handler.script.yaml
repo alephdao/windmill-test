@@ -8,10 +8,13 @@ schema:
   $schema: 'https://json-schema.org/draft/2020-12/schema'
   type: object
   properties:
-    body:
+    message:
       type: object
-      description: Telegram webhook update body
+      description: Telegram message object
       default: null
       properties: {}
-  required:
-    - body
+    update_id:
+      type: integer
+      description: Telegram update ID
+      default: null
+  required: []

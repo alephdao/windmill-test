@@ -2,37 +2,39 @@ import wmill
 import json
 import requests
 
-def main(body: dict = None) -> dict:
+def main(message: dict = None, update_id: int = None, **kwargs) -> dict:
     """
     Complete Telegram bot webhook handler for movie mood generation
+    Handles Telegram webhook updates directly by accepting message and update_id parameters
     """
     
     try:
-        print(f"Received Telegram webhook: {json.dumps(body, indent=2)}")
-        print(f"Body type: {type(body)}")
+        # Reconstruct the telegram update object
+        telegram_update = {
+            "message": message,
+            "update_id": update_id,
+            **kwargs  # Include any other fields Telegram might send
+        }
         
-        # Handle null/None body
-        if body is None:
-            print("Body is None - no data received from Telegram")
-            return {"status": "no_data", "error": "No webhook data received"}
+        print(f"Received Telegram webhook: {json.dumps(telegram_update, indent=2)}")
+        print(f"Message: {message}")
+        print(f"Update ID: {update_id}")
         
-        # Handle non-dict body (sometimes comes as string)
-        if not isinstance(body, dict):
-            print(f"Body is not dict, trying to parse: {body}")
+        # Handle case where message is None
+        if message is None:
+            print("No message received from Telegram")
+            return {"status": "no_message", "error": "No message data received"}
+        
+        # Handle non-dict message (sometimes comes as string)
+        if not isinstance(message, dict):
+            print(f"Message is not dict, trying to parse: {message}")
             try:
-                if isinstance(body, str):
-                    body = json.loads(body)
+                if isinstance(message, str):
+                    message = json.loads(message)
                 else:
-                    return {"status": "invalid_format", "error": f"Body is {type(body)}, expected dict"}
+                    return {"status": "invalid_format", "error": f"Message is {type(message)}, expected dict"}
             except json.JSONDecodeError as e:
-                return {"status": "json_error", "error": f"Could not parse body as JSON: {str(e)}"}
-        
-        # Extract message details from Telegram update
-        if 'message' not in body:
-            print(f"No 'message' key in body. Keys: {list(body.keys()) if body else 'None'}")
-            return {"status": "no_message", "response": "No message in update", "body_keys": list(body.keys()) if body else None}
-        
-        message = body['message']
+                return {"status": "json_error", "error": f"Could not parse message as JSON: {str(e)}"}
         chat_id = message['chat']['id']
         
         # Check if message has text
@@ -100,8 +102,8 @@ def main(body: dict = None) -> dict:
         print(f"Error in telegram bot handler: {str(e)}")
         # Try to send error message to user if possible
         try:
-            if body and isinstance(body, dict) and 'message' in body and 'chat' in body['message']:
-                chat_id = body['message']['chat']['id']
+            if message and isinstance(message, dict) and 'chat' in message:
+                chat_id = message['chat']['id']
                 return send_telegram_message(
                     chat_id, 
                     f"🚨 Oops! Something went wrong. Please try again later.\n\nError: {str(e)}"
@@ -112,8 +114,9 @@ def main(body: dict = None) -> dict:
         return {
             "status": "error", 
             "error": str(e),
-            "update_received": body,
-            "body_type": str(type(body))
+            "message_received": message,
+            "update_id": update_id,
+            "message_type": str(type(message))
         }
 
 
