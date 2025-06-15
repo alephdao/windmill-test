@@ -16,6 +16,8 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
+
+
 ### 2. Configure API Keys
 
 #### For Local Development:
@@ -58,6 +60,8 @@ wmill sync push
 2. Send `/start` to your bot in Telegram
 3. Send any movie title: `Inception`, `The Matrix`, `Star Wars`
 4. Get instant mood words response! ✨
+
+webhook path go to scripts --> click the webhook. then ---> find url. here is the general webhook path format. https://app.windmill.dev/api/w/philip-galebach/jobs/run/p/u/philipgalebach/telegram_webhook
 
 ### Command Line Test:
 ```bash
